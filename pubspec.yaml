@@ -1,0 +1,4 @@
+name: game_of_life
+description: An implementation of game of life
+dependencies:
+  browser: any
