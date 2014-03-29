@@ -15,13 +15,17 @@
     </div>
 
     <div>
+      <label>Size: <input type="range" min="2" max="150" ng-model="ctrl.size"></label>
+      <br>
+      <label>Wrap: <input type="checkbox" ng-model="ctrl.wrapAround"></label>
+      <br>
       <label>Run: <input type="checkbox" ng-model="ctrl.run"></label>
       <br>
       <label>Cell size: <input type="range" min="2" max="15" ng-model="ctrl.cellSize"></label>
     </div>
 
     <div>
-      <gol-renderer game="ctrl.game" cell-size="{{ctrl.cellSize}}">
+      <gol-renderer game="ctrl.game" cell-size="{{ctrl.cellSize}}"></gol-renderer>
     </div>
 
     <script src="packages/shadow_dom/shadow_dom.min.js"></script>

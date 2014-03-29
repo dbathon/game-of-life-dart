@@ -15,11 +15,13 @@ valueOrDefault(value, defaultValue) {
   return value != null ? value : defaultValue;
 }
 
-int intOrDefault(String str, int defaultValue) {
-  if (str == null) {
+int intOrDefault(input, int defaultValue) {
+  if (input == null) {
     return defaultValue;
+  } else if (input is num) {
+    return (input as num).toInt();
   } else {
-    return num.parse(str, (_) => defaultValue).toInt();
+    return num.parse(input.toString(), (_) => defaultValue).toInt();
   }
 }
 
@@ -98,13 +100,24 @@ class GolRendererComponent implements NgShadowRootAware {
 
 @NgController(selector: "[gol-ctrl]", publishAs: "ctrl")
 class AppController {
-  GameOfLife game = new GameOfLife(60, 60, true);
+  num size = 60;
+  bool wrapAround = true;
+
+  GameOfLife game;
 
   bool run = false;
 
   num cellSize = 8;
 
-  AppController() {
+  AppController(Scope scope) {
+    clear();
+
+    scope.watch('[size, wrapAround]', (v, _) {
+      GameOfLife oldGame = game;
+      clear();
+      game.copyFrom(oldGame);
+    }, context: this);
+
     new Timer.periodic(new Duration(milliseconds: 50), (Timer) {
       if (run) {
         nextState();
@@ -121,7 +134,8 @@ class AppController {
   }
 
   void clear() {
-    game = new GameOfLife(60, 60, true);
+    int size = intOrDefault(this.size, 60);
+    game = new GameOfLife(size, size, wrapAround);
   }
 
 }
