@@ -19,7 +19,7 @@ int intOrDefault(String str, int defaultValue) {
   if (str == null) {
     return defaultValue;
   } else {
-    return int.parse(str, onError: (_) => defaultValue);
+    return num.parse(str, (_) => defaultValue).toInt();
   }
 }
 
@@ -51,7 +51,7 @@ class GolRendererComponent implements NgShadowRootAware {
 
     canvas.onClick.listen(click);
 
-    scope.watch('[game, game.version, cellSize, liveColor, liveColor]', (v, _)
+    scope.watch('[game, game.version, cellSize, liveColor, deadColor]', (v, _)
         => draw(), context: this);
   }
 
@@ -102,7 +102,7 @@ class AppController {
 
   bool run = false;
 
-  String cellSize = "10";
+  num cellSize = 8;
 
   AppController() {
     new Timer.periodic(new Duration(milliseconds: 50), (Timer) {
