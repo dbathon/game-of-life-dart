@@ -1,4 +1,4 @@
 Game of life
 ============
 
-Implemented in Dart.
+Implemented in Dart with AngularDart.

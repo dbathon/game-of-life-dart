@@ -8,6 +8,7 @@ class GameOfLife {
   final int width, height;
   final bool wrapAround;
   List<bool> _cells;
+  int version = 0;
 
   GameOfLife(this.width, this.height, [this.wrapAround = true]) {
     _cells = new List<bool>.filled(width * height, false);
@@ -32,6 +33,7 @@ class GameOfLife {
     int index = _toIndex(x, y);
     if (index >= 0) {
       _cells[index] = val;
+      version += 1;
     }
   }
 

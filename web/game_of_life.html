@@ -1,26 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html ng-app>
   <head>
     <meta charset="utf-8">
     <title>Game of Life</title>
     <link rel="stylesheet" href="game_of_life.css">
   </head>
-  <body>
+  <body gol-ctrl>
     <h1>Game of Life</h1>
 
-    <p>Hello world from Dart!</p>
-
     <div class="buttons">
-      <button id="runStop">Run</button>
-      <button id="random">Random</button>
+      <button ng-click="ctrl.nextState()">Step</button>
+      <button ng-click="ctrl.random()">Random</button>
+      <button ng-click="ctrl.clear()">Clear</button>
     </div>
-
-    <p>Field:</p>
 
     <div>
-      <canvas id="canvas" width="300" height="300"></canvas>
+      <label>Run: <input type="checkbox" ng-model="ctrl.run"></label>
+      <br>
+      <label>Cell size: <input type="text" ng-model="ctrl.cellSize"></label>
     </div>
 
+    <div>
+      <gol-renderer game="ctrl.game" cell-size="{{ctrl.cellSize}}">
+    </div>
+
+    <script src="packages/shadow_dom/shadow_dom.min.js"></script>
     <script type="application/dart" src="game_of_life_app.dart"></script>
     <script src="packages/browser/dart.js"></script>
   </body>

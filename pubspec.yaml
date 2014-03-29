@@ -2,3 +2,6 @@ name: game_of_life
 description: An implementation of game of life
 dependencies:
   browser: any
+  angular: 0.9.10
+  js: any
+  shadow_dom: any
