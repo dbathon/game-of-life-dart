@@ -106,6 +106,8 @@ class AppController {
   GameOfLife game;
 
   bool run = false;
+  num runDelay = 50;
+  Timer currentTimer;
 
   num cellSize = 8;
 
@@ -118,11 +120,25 @@ class AppController {
       game.copyFrom(oldGame);
     }, context: this);
 
-    new Timer.periodic(new Duration(milliseconds: 50), (Timer) {
-      if (run) {
-        nextState();
+    scope.watch('[run, runDelay]', (v, _) {
+      if (currentTimer != null) {
+        currentTimer.cancel();
+        currentTimer = null;
       }
-    });
+      setupTimer();
+    }, context: this);
+  }
+
+  setupTimer() {
+    if (run) {
+      currentTimer = new Timer(new Duration(milliseconds: runDelay.toInt()), () {
+        currentTimer = null;
+        if (run) {
+          nextState();
+          setupTimer();
+        }
+      });
+    }
   }
 
   void nextState() {
