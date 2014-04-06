@@ -45,13 +45,18 @@ class GolRendererComponent implements NgShadowRootAware {
 
   CanvasElement canvas;
 
+  bool drawLive = null;
+
   GolRendererComponent(this.scope);
 
   @override
   void onShadowRoot(ShadowRoot shadowRoot) {
     canvas = shadowRoot.querySelector("canvas");
 
-    canvas.onClick.listen(click);
+    canvas.onMouseDown.listen(drawStart);
+    canvas.onMouseMove.listen(drawMove);
+    canvas.onMouseUp.listen(drawStop);
+    canvas.onMouseLeave.listen(drawStop);
 
     scope.watch('[game, game.version, cellSize, liveColor, deadColor]', (v, _)
         => draw(), context: this);
@@ -87,14 +92,31 @@ class GolRendererComponent implements NgShadowRootAware {
     context.restore();
   }
 
-  click(MouseEvent e) {
-    if (game != null) {
-      int cellSize = getCellSize();
-      Rectangle clientRect = canvas.getBoundingClientRect();
-      int x = (e.client.x - clientRect.left) ~/ cellSize;
-      int y = (e.client.y - clientRect.top) ~/ cellSize;
-      game.set(x, y, !game.get(x, y));
+  Point _extractPosition(MouseEvent e) {
+    int cellSize = getCellSize();
+    Rectangle clientRect = canvas.getBoundingClientRect();
+    int x = (e.client.x - clientRect.left) ~/ cellSize;
+    int y = (e.client.y - clientRect.top) ~/ cellSize;
+    return new Point(x, y);
+  }
+
+  void drawStart(MouseEvent e) {
+    if (game != null && e.button == 0) {
+      Point pos = _extractPosition(e);
+      drawLive = !game.get(pos.x, pos.y);
+      game.set(pos.x, pos.y, drawLive);
     }
+  }
+
+  void drawMove(MouseEvent e) {
+    if (game != null && drawLive != null) {
+      Point pos = _extractPosition(e);
+      game.set(pos.x, pos.y, drawLive);
+    }
+  }
+
+  void drawStop(MouseEvent e) {
+    drawLive = null;
   }
 
 }
@@ -133,7 +155,8 @@ class AppController {
 
   setupTimer() {
     if (run) {
-      currentTimer = new Timer(new Duration(milliseconds: runDelay.toInt()), () {
+      currentTimer = new Timer(new Duration(milliseconds: runDelay.toInt()), ()
+          {
         currentTimer = null;
         if (run) {
           nextState();
