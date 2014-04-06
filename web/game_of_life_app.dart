@@ -70,27 +70,29 @@ class GolRendererComponent implements NgShadowRootAware {
     String liveColor = valueOrDefault(this.liveColor, "red");
     String deadColor = valueOrDefault(this.deadColor, "lightgrey");
 
-    canvas.width = game.width * cellSize;
-    canvas.height = game.height * cellSize;
+    canvas.width = (game.width * cellSize) - 1;
+    canvas.height = (game.height * cellSize) - 1;
 
     CanvasRenderingContext2D context = canvas.context2D;
+    context.save();
     context.clearRect(0, 0, canvas.width, canvas.height);
     for (int x = 0; x < game.width; ++x) {
       for (int y = 0; y < game.height; ++y) {
         bool live = game.get(x, y);
         context
             ..fillStyle = live ? liveColor : deadColor
-            ..fillRect(x * cellSize + 1, y * cellSize + 1, cellSize - 1,
-                cellSize - 1);
+            ..fillRect(x * cellSize, y * cellSize, cellSize - 1, cellSize - 1);
       }
     }
+    context.restore();
   }
 
   click(MouseEvent e) {
     if (game != null) {
       int cellSize = getCellSize();
-      int x = e.offset.x ~/ cellSize;
-      int y = e.offset.y ~/ cellSize;
+      Rectangle clientRect = canvas.getBoundingClientRect();
+      int x = (e.client.x - clientRect.left) ~/ cellSize;
+      int y = (e.client.y - clientRect.top) ~/ cellSize;
       game.set(x, y, !game.get(x, y));
     }
   }
