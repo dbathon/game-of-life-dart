@@ -53,20 +53,12 @@ class GameOfLife {
     }
   }
 
-  int neighborCount(int x, int y) {
+  int _threeSum(int x, int y) {
     int result = 0;
 
-    result += get(x - 1, y - 1) ? 1 : 0;
-    result += get(x + 0, y - 1) ? 1 : 0;
-    result += get(x + 1, y - 1) ? 1 : 0;
-
-    result += get(x - 1, y + 0) ? 1 : 0;
-
-    result += get(x + 1, y + 0) ? 1 : 0;
-
-    result += get(x - 1, y + 1) ? 1 : 0;
-    result += get(x + 0, y + 1) ? 1 : 0;
-    result += get(x + 1, y + 1) ? 1 : 0;
+    result += get(x, y - 1) ? 1 : 0;
+    result += get(x, y) ? 1 : 0;
+    result += get(x, y + 1) ? 1 : 0;
 
     return result;
   }
@@ -74,14 +66,17 @@ class GameOfLife {
   GameOfLife nextState() {
     GameOfLife result = new GameOfLife(width, height, wrapAround);
 
-    for (int x = 0; x < width; ++x) {
-      for (int y = 0; y < height; ++y) {
-        bool live = get(x, y);
-        int nc = neighborCount(x, y);
-        if (live) {
-          result.set(x, y, nc == 2 || nc == 3);
-        } else {
-          result.set(x, y, nc == 3);
+    for (int y = 0; y < height; ++y) {
+      int nc = _threeSum(-1, y) + _threeSum(0, y);
+      for (int x = 0; x < width; ++x) {
+        nc += _threeSum(x + 1, y);
+
+        if (nc == 3 || (nc == 4 && get(x, y))) {
+          result.set(x, y, true);
+        }
+
+        if (nc > 0) {
+          nc -= _threeSum(x - 1, y);
         }
       }
     }
