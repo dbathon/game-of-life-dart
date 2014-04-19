@@ -5,11 +5,9 @@ import 'dart:async';
 import "game_of_life.dart";
 
 import 'package:angular/angular.dart';
+import 'package:angular/application_factory.dart';
 import 'package:di/di.dart';
 
-// Temporary, please follow https://github.com/angular/angular.dart/issues/476
-@MirrorsUsed(targets: const ['game_of_life'], override: '*')
-import 'dart:mirrors';
 
 valueOrDefault(value, defaultValue) {
   return value != null ? value : defaultValue;
@@ -25,10 +23,10 @@ int intOrDefault(input, int defaultValue) {
   }
 }
 
-@NgComponent(selector: "gol-renderer", template: """
+@Component(selector: "gol-renderer", template: """
 <canvas></canvas>
-""")
-class GolRendererComponent implements NgShadowRootAware {
+""", exportExpressions: const ['[game, game.version, cellSize, liveColor, deadColor]'])
+class GolRendererComponent implements ShadowRootAware {
 
   Scope scope;
 
@@ -58,8 +56,7 @@ class GolRendererComponent implements NgShadowRootAware {
     canvas.onMouseUp.listen(drawStop);
     canvas.onMouseLeave.listen(drawStop);
 
-    scope.watch('[game, game.version, cellSize, liveColor, deadColor]', (v, _)
-        => draw(), context: this);
+    scope.watch('[game, game.version, cellSize, liveColor, deadColor]', (v, _) => draw(), context: this);
   }
 
   int getCellSize() => intOrDefault(this.cellSize, 10);
@@ -122,7 +119,7 @@ class GolRendererComponent implements NgShadowRootAware {
 }
 
 
-@NgController(selector: "[gol-ctrl]", publishAs: "ctrl")
+@Controller(selector: "[gol-ctrl]", publishAs: "ctrl", exportExpressions: const ['[size, wrapAround]', '[run, runDelay]'])
 class AppController {
   num size = 60;
   bool wrapAround = true;
@@ -155,8 +152,7 @@ class AppController {
 
   setupTimer() {
     if (run) {
-      currentTimer = new Timer(new Duration(milliseconds: runDelay.toInt()), ()
-          {
+      currentTimer = new Timer(new Duration(milliseconds: runDelay.toInt()), () {
         currentTimer = null;
         if (run) {
           nextState();
@@ -190,5 +186,5 @@ class AppModule extends Module {
 }
 
 void main() {
-  ngBootstrap(module: new AppModule());
+  applicationFactory().addModule(new AppModule()).run();
 }
