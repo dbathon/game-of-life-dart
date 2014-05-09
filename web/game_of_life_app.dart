@@ -25,7 +25,8 @@ int intOrDefault(input, int defaultValue) {
 
 @Component(selector: "gol-renderer", template: """
 <canvas></canvas>
-""", exportExpressions: const ['[game, game.version, cellSize, liveColor, deadColor]'])
+""", exportExpressions: const
+    ['[game, game.version, cellSize, liveColor, deadColor]'])
 class GolRendererComponent implements ShadowRootAware {
 
   Scope scope;
@@ -119,7 +120,8 @@ class GolRendererComponent implements ShadowRootAware {
 }
 
 
-@Controller(selector: "[gol-ctrl]", publishAs: "ctrl", exportExpressions: const ['[size, wrapAround]', '[run, runDelay]'])
+@Controller(selector: "[gol-ctrl]", publishAs: "ctrl", exportExpressions: const ['[size, wrapAround]',
+    '[run, runDelay]'])
 class AppController {
   num size = 60;
   bool wrapAround = true;
