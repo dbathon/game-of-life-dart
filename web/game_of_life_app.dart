@@ -25,9 +25,9 @@ int intOrDefault(input, int defaultValue) {
 
 @Component(selector: "gol-renderer", template: """
 <canvas></canvas>
-""", exportExpressions: const
+""", useShadowDom: false, exportExpressions: const
     ['[game, game.version, cellSize, liveColor, deadColor]'])
-class GolRendererComponent implements ShadowRootAware {
+class GolRendererComponent implements AttachAware {
 
   Scope scope;
 
@@ -42,15 +42,16 @@ class GolRendererComponent implements ShadowRootAware {
   @NgOneWay("game")
   GameOfLife game;
 
+  Element element;
   CanvasElement canvas;
 
   bool drawLive = null;
 
-  GolRendererComponent(this.scope);
+  GolRendererComponent(this.scope, this.element);
 
   @override
-  void onShadowRoot(ShadowRoot shadowRoot) {
-    canvas = shadowRoot.querySelector("canvas");
+  void attach() {
+    canvas = element.querySelector("canvas");
 
     canvas.onMouseDown.listen(drawStart);
     canvas.onMouseMove.listen(drawMove);
