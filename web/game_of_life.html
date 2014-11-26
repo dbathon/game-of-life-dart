@@ -5,30 +5,8 @@
     <title>Game of Life</title>
     <link rel="stylesheet" href="game_of_life.css">
   </head>
-  <body gol-ctrl>
-    <h1>Game of Life</h1>
-
-    <div class="buttons">
-      <button ng-click="ctrl.nextState()">Step</button>
-      <button ng-click="ctrl.random()">Random</button>
-      <button ng-click="ctrl.clear()">Clear</button>
-    </div>
-
-    <div>
-      <label>Size: <input type="range" min="2" max="150" ng-model="ctrl.size"></label>
-      <br>
-      <label>Wrap: <input type="checkbox" ng-model="ctrl.wrapAround"></label>
-      <br>
-      <label>Run: <input type="checkbox" ng-model="ctrl.run"></label>
-      <br>
-      <label>Delay: <input type="range" min="5" max="1000" ng-model="ctrl.runDelay"></label>
-      <br>
-      <label>Cell size: <input type="range" min="2" max="15" ng-model="ctrl.cellSize"></label>
-    </div>
-
-    <div>
-      <gol-renderer game="ctrl.game" cell-size="{{ctrl.cellSize}}"></gol-renderer>
-    </div>
+  <body>
+    <game-of-life></game-of-life>
 
     <script type="application/dart" src="game_of_life_app.dart"></script>
     <script src="packages/browser/dart.js"></script>

@@ -25,9 +25,8 @@ int intOrDefault(input, int defaultValue) {
 
 @Component(selector: "gol-renderer", template: """
 <canvas></canvas>
-""", useShadowDom: false, exportExpressions: const
-    ['[game, game.version, cellSize, liveColor, deadColor]'])
-class GolRendererComponent implements AttachAware {
+""", useShadowDom: false, exportExpressions: const ['[game, game.version, cellSize, liveColor, deadColor]'])
+class GolRendererComponent implements ScopeAware, AttachAware {
 
   Scope scope;
 
@@ -47,7 +46,7 @@ class GolRendererComponent implements AttachAware {
 
   bool drawLive = null;
 
-  GolRendererComponent(this.scope, this.element);
+  GolRendererComponent(this.element);
 
   @override
   void attach() {
@@ -120,10 +119,32 @@ class GolRendererComponent implements AttachAware {
 
 }
 
+@Component(selector: "game-of-life", template: """
+<h1>Game of Life</h1>
 
-@Controller(selector: "[gol-ctrl]", publishAs: "ctrl", exportExpressions: const ['[size, wrapAround]',
-    '[run, runDelay]'])
-class AppController {
+<div class="buttons">
+  <button ng-click="nextState()">Step</button>
+  <button ng-click="random()">Random</button>
+  <button ng-click="clear()">Clear</button>
+</div>
+
+<div>
+  <label>Size: <input type="range" min="2" max="150" ng-model="size"></label>
+  <br>
+  <label>Wrap: <input type="checkbox" ng-model="wrapAround"></label>
+  <br>
+  <label>Run: <input type="checkbox" ng-model="run"></label>
+  <br>
+  <label>Delay: <input type="range" min="5" max="1000" ng-model="runDelay"></label>
+  <br>
+  <label>Cell size: <input type="range" min="2" max="15" ng-model="cellSize"></label>
+</div>
+
+<div>
+  <gol-renderer game="game" cell-size="{{cellSize}}"></gol-renderer>
+</div>
+""", exportExpressions: const ['[size, wrapAround]', '[run, runDelay]'], useShadowDom: false)
+class AppController extends ScopeAware {
   num size = 60;
   bool wrapAround = true;
 
@@ -135,9 +156,12 @@ class AppController {
 
   num cellSize = 8;
 
-  AppController(Scope scope) {
+  AppController() {
     clear();
+  }
 
+  @override
+  void set scope(Scope scope) {
     scope.watch('[size, wrapAround]', (v, _) {
       GameOfLife oldGame = game;
       clear();
@@ -183,8 +207,8 @@ class AppController {
 
 class AppModule extends Module {
   AppModule() {
-    type(AppController);
-    type(GolRendererComponent);
+    bind(AppController);
+    bind(GolRendererComponent);
   }
 }
 

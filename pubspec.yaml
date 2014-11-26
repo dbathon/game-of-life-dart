@@ -2,7 +2,7 @@ name: game_of_life
 description: An implementation of game of life
 dependencies:
   browser: any
-  angular: 0.12.0
+  angular: 1.0.0
   js: any
 
 transformers:
